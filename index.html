@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TODO TASK</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/myApp.css">
+    <script src="js/vue.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid" id="app">
+        <div class="row bg-primary">
+            <div class="col-md-6 col-md-offset-3">
+                <h3 class="text-center">任务计划列表</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <h4><b>添加任务:</b></h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 input-group ">
+                <div class="input-group col-md-12">
+                    <input type="text" class="form-control" @keyup.enter="addTodo" v-model="todo"
+                        placeholder="请输入任务 回车:添加 双击:可编辑">
+                    <span class="input-group-btn">
+                        <button class="btn btn-info" @click="addTodo">添加任务</button>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+        <div class="row sort">
+            <div class="col-md-6 col-md-offset-3">
+                <h4 class="col-md-6 col-sm-12 col-xs-12 text-danger">
+                    {{checkedLength}}个任务未完成</h4>
+                <div class="col-md-5 col-sm-12 col-xs-12 sortdiv text-center">
+                    <button class="btn btn-info btn-sm" :class="{active:isClick===1}" @click="allhandle">所有任务</button>
+                    <button class="btn btn-info btn-sm" :class="{active:isClick===2}" @click="nfhandle">未完成的任务</button>
+                    <button class="btn btn-info btn-sm" :class="{active:isClick===3}" @click="fhandle">完成的任务</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <h4>
+                    <b>任务列表:</b>
+                    <span v-show="isClick===1" @click="isClickHandle(1)">所有任务</span>
+                    <span v-show="isClick===2" @click="isClickHandle(2)">未完成的任务</span>
+                    <span v-show="isClick===3" @click="isClickHandle(3)">完成的任务</span>
+                </h4>
+            </div>
+        </div>
+        <transition-group name="list-complete" tag="p">
+            <div class="row page-header list-complete-item" v-for="(item,index) in list" :key="item.key"
+                v-show="isClick==1||isClick==2&&item.checkedstatic==false||isClick==3&&item.checkedstatic==true">
+                <div class="col-md-1 col-md-offset-3 col-sm-1 col-xs-1">
+                    <input type="checkbox" v-model="item.checkedstatic">
+                </div>
+                <div class="col-md-4 col-sm-10 col-xs-10 text-center cur" @dblclick="edtorTodo(item)">
+                    <span v-show="item.checkedstatic==false&&item.dblstatic==false">{{item.title}}</span>
+                    <del class="text-info" v-show="item.checkedstatic==true&&item.dblstatic==false">{{item.title}}</del>
+                    <input type="text" class="col-md-12 form-control" v-model="item.title" v-show="item.dblstatic==true"
+                        v-focus="item.dblstatic==true" @blur="deleteTodoed(item)" @keyup.enter="deleteTodoed(item)"
+                        @keyup.esc="deleteTodoed(item)" />
+                </div>
+                <div class="col-md-1 col-sm-1 col-xs-1">
+                    <button type="button" class="close" @click="deleteTodo(index)">&times;</button>
+                </div>
+            </div>
+        </transition-group>
+        <transition name="fade" mode="out-in">
+            <div class="row" v-if="taskLength">
+                <div class="col-md-6 col-md-offset-3">
+                    <h4>还没有添加任务</h4>
+                </div>
+            </div>
+        </transition>
+    </div>
+</body>
+<script src="js/myApp.js"></script>
+
+</html>
